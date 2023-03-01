@@ -1,9 +1,10 @@
+#@daniruiz
 # Configure color-scheme
 COLOR_SCHEME=dark # dark/light
 
 
 # --------------------------------- ALIASES -----------------------------------
-#alias ..='cd ..'
+alias ..='cd ..'
 alias cp='cp -v'
 alias rm='rm -I'
 alias mv='mv -iv'
@@ -11,7 +12,7 @@ alias ln='ln -sriv'
 alias xclip='xclip -selection c'
 command -v vim > /dev/null && alias vi='vim'
 
-### Colorize commands
+# Colorize output of common commands
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
@@ -20,16 +21,17 @@ alias diff='diff --color=auto'
 alias ip='ip --color=auto'
 alias pacman='pacman --color=auto'
 
-### LS & TREE
+### Shortcuts for ls and tree commands
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -F'
+# Use 'lsd' or 'colorls' if available
 command -v lsd > /dev/null && alias ls='lsd --group-dirs first' && \
 	alias tree='lsd --tree'
 command -v colorls > /dev/null && alias ls='colorls --sd --gs' && \
 	alias tree='colorls --tree'
 
-### CAT & LESS
+### Use 'bat' or 'batcat' instead of 'cat' and 'less'
 command -v bat > /dev/null && \
 	alias bat='bat --theme=ansi' && \
 	alias cat='bat --pager=never' && \
@@ -40,7 +42,7 @@ command -v batcat > /dev/null && \
 	alias cat='batcat --pager=never' && \
 	alias less='batcat'
 
-### TOP
+### TOP alternatives
 command -v htop > /dev/null && alias top='htop'
 command -v gotop > /dev/null && alias top='gotop -p $([ "$COLOR_SCHEME" = "light" ] && echo "-c default-dark")'
 command -v ytop > /dev/null && alias top='ytop -p $([ "$COLOR_SCHEME" = "light" ] && echo "-c default-dark")'
@@ -50,39 +52,40 @@ command -v bashtop > /dev/null && alias top='bashtop'
 command -v bpytop > /dev/null && alias top='bpytop'
 
 # --------------------------------- SETTINGS ----------------------------------
-setopt AUTO_CD
-setopt BEEP
-#setopt CORRECT
-setopt HIST_BEEP
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_FIND_NO_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_IGNORE_DUPS
-setopt HIST_REDUCE_BLANKS
-setopt HIST_SAVE_NO_DUPS
-setopt HIST_VERIFY
-setopt INC_APPEND_HISTORY
-setopt INTERACTIVE_COMMENTS
-setopt MAGIC_EQUAL_SUBST
-setopt NO_NO_MATCH
-setopt NOTIFY
-setopt NUMERIC_GLOB_SORT
+# Set various options for shell behavior
+setopt AUTO_CD # change to directory without typing 'cd'
+setopt BEEP # sound a beep for errors
+setopt CORRECT # attempt command correction
+setopt HIST_BEEP # beep when accessing non-existent history entry
+setopt HIST_EXPIRE_DUPS_FIRST # expire duplicates first when trimming history
+setopt HIST_FIND_NO_DUPS # don't show duplicates when searching history
+setopt HIST_IGNORE_ALL_DUPS # ignore all duplicates when saving history
+setopt HIST_IGNORE_DUPS # ignore duplicates when saving history
+setopt HIST_REDUCE_BLANKS # remove consecutive blank lines from history
+setopt HIST_SAVE_NO_DUPS # don't save duplicates in history
+setopt HIST_VERIFY # ask for confirmation before running history substitution
+setopt INC_APPEND_HISTORY # save commands as they are typed
+setopt INTERACTIVE_COMMENTS # enable comments in interactive shells
+setopt MAGIC_EQUAL_SUBST # perform variable and command substitutions in prompts
+setopt NO_NO_MATCH # don't generate error on failed filename expansion
+setopt NOTIFY # report background job completion immediately
+setopt NUMERIC_GLOB_SORT # sort filenames numerically
 setopt PROMPT_SUBST
 setopt SHARE_HISTORY
 
-HISTFILE=~/.zsh_history
+HISTFILE=${HOME}/.zsh_history
 HIST_STAMPS=mm/dd/yyyy
-HISTSIZE=5000
-SAVEHIST=5000
-ZLE_RPROMPT_INDENT=0
-WORDCHARS=${WORDCHARS//\/}
-PROMPT_EOL_MARK=
-TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S\ncpu\t%P'
+HISTSIZE=5000 # maximum number of commands saved in history
+SAVEHIST=5000 # maximum number of commands saved across sessions
+ZLE_RPROMPT_INDENT=0 # disable right-side prompt indentation
+WORDCHARS=${WORDCHARS//\/} # exclude slash character from word characters
+PROMPT_EOL_MARK=  # don't add a mark at the end of the prompt line
+TIMEFMT=$'\nreal\t%E\nuser\t%U\nsys\t%S\ncpu\t%P' # format for time output
 
 
 # ZSH completion system
 autoload -Uz compinit
-compinit -d ~/.cache/zcompdump
+compinit -d ${HOME}/.cache/zcompdump
 zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
@@ -219,7 +222,7 @@ then
 		POWERLEVEL9K_MODE=nerdfont-complete
 		
 		# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-		[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+		[[ ! -f ${HOME}/.p10k.zsh ]] || source ${HOME}/.p10k.zsh
 		
 		unset s
 	else
@@ -246,14 +249,14 @@ bindkey ^P switch_powerlevel_multiline_prompt
 # -------------------------------- FUNCTIONS ---------------------------------
 lazygit() {
 	USAGE="
-lazygit [OPTION]... <msg>
-    GIT but lazy
-    Options:
-        --fixup <commit>        runs 'git commit --fixup <commit> [...]'
-        --amend                 runs 'git commit --amend --no-edit [...]'
-        -f, --force             runs 'git push --force-with-lease [...]'
-        -h, --help              show this help text
-"
+	lazygit [OPTION]... <msg>
+		GIT but lazy
+		Options:
+			--fixup <commit>        runs 'git commit --fixup <commit> [...]'
+			--amend                 runs 'git commit --amend --no-edit [...]'
+			-f, --force             runs 'git push --force-with-lease [...]'
+			-h, --help              show this help text
+	"
 	while [ $# -gt 0 ]
 	do
 		key="$1"
@@ -343,11 +346,12 @@ fi
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+if command -v pyenv >/dev/null; then
+    eval "$(pyenv init --path)"
+	eval "$(pyenv virtualenv-init -)"
+fi
 
 # pipenv
-export PIPENV_VENV_IN_PROJECT=1 # project local env
-
-[[ ! -f ~/.profile ]] || source ~/.profile
+if command -v pipenv >/dev/null; then
+    eval "$(pipenv --completion)"
+fi
